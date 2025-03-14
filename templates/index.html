@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客 | 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        'primary': '#2A3F54',
+                        'accent': '#4A90E2',
+                        'light': '#F5F7FA',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #FCFCFC;
+            padding-bottom: 80px;
+        }
+
+        /* 链接悬停过渡 */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #4A90E2;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col">
+    {% set active_page = 'home' %}
+    <div class="flex flex-col min-h-screen">
+        {% include 'components/nav.html' %}
+
+        <!-- 页面头部 -->
+        <header class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl md:text-4xl font-light text-primary mb-4">{{ profile.name if profile else '个人博客' }}</h1>
+                <p class="text-gray-600 leading-relaxed">
+                    {{ profile.bio[:120] + '...' if profile and profile.bio|length > 120 else (profile.bio if profile else '欢迎来到我的个人空间，这里记录我的思考与成长') }}
+                </p>
+                <div class="mt-8 flex justify-center">
+                    <a href="/about" class="inline-flex items-center justify-center border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300 py-2 px-6 rounded-md">
+                        了解更多
+                        <img src="https://unpkg.com/lucide-static@latest/icons/arrow-right.svg" alt="Arrow right" class="w-4 h-4 ml-2">
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 最新文章 -->
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+            <section class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-light text-primary mb-8 flex items-center">
+                    <span class="border-b-2 border-accent pb-1">最新文章</span>
+                    <div class="flex-grow border-b border-gray-200 ml-4"></div>
+                </h2>
+                
+                {% if posts %}
+                    <div class="grid md:grid-cols-2 gap-8">
+                        {% for post in posts[:4] %}
+                            <article class="card-hover group border border-gray-100 hover:border-accent transition-all duration-300 p-6 rounded-md flex flex-col h-full">
+                                <div class="flex-grow">
+                                    <div class="text-sm text-gray-500 mb-2">{{ post.created_at.strftime('%Y-%m-%d') }}</div>
+                                    <h3 class="text-xl text-primary group-hover:text-accent transition-colors duration-300 mb-3">
+                                        <a href="{{ url_for('post', post_id=post.id) }}" class="hover:underline">{{ post.title }}</a>
+                                    </h3>
+                                    <p class="text-gray-600 mb-4">{{ post.content[:100] + '...' if post.content|length > 100 else post.content }}</p>
+                                </div>
+                                <a href="{{ url_for('post', post_id=post.id) }}" class="inline-flex items-center text-accent text-sm mt-2 group">
+                                    阅读全文
+                                    <img src="https://unpkg.com/lucide-static@latest/icons/chevron-right.svg" alt="Read more" class="w-4 h-4 ml-1">
+                                </a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if posts|length > 4 %}
+                        <div class="text-center mt-10">
+                            <a href="/notes" class="inline-flex items-center justify-center border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300 py-2 px-6 rounded-md">
+                                查看更多文章
+                                <img src="https://unpkg.com/lucide-static@latest/icons/arrow-right.svg" alt="More" class="w-4 h-4 ml-2">
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-12 border border-dashed border-gray-300 rounded-md">
+                        <img src="https://unpkg.com/lucide-static@latest/icons/file-text.svg" alt="No posts" class="w-12 h-12 mx-auto mb-4 text-gray-400">
+                        <p class="text-gray-500">暂无文章</p>
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        {% include 'components/footer.html' %}
+    </div>
+
+    <script>
+        // 移动端菜单切换
+        document.querySelector('button').addEventListener('click', function() {
+            const mobileMenu = document.querySelector('.md\\:hidden:not(button)');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html> 

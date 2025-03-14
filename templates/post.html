@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} | 个人博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        'primary': '#2A3F54',
+                        'accent': '#4A90E2',
+                        'light': '#F5F7FA',
+                    },
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                maxWidth: '100%',
+                                color: '#333',
+                                a: {
+                                    color: '#4A90E2',
+                                    '&:hover': {
+                                        color: '#2A3F54',
+                                    },
+                                },
+                                h1: {
+                                    color: '#2A3F54',
+                                    fontWeight: '400',
+                                },
+                                h2: {
+                                    color: '#2A3F54',
+                                    fontWeight: '400',
+                                },
+                                h3: {
+                                    color: '#2A3F54',
+                                    fontWeight: '400',
+                                },
+                                blockquote: {
+                                    borderLeftColor: '#4A90E2',
+                                },
+                                code: {
+                                    color: '#4A90E2',
+                                },
+                                pre: {
+                                    backgroundColor: '#F5F7FA',
+                                },
+                                img: {
+                                    marginTop: '1.5em',
+                                    marginBottom: '1.5em',
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #FCFCFC;
+            padding-bottom: 80px;
+        }
+        
+        /* 链接悬停过渡 */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #4A90E2;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        
+        /* 为Markdown内容添加样式 */
+        .prose {
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        .prose h1 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        .prose h2 {
+            font-size: 1.5rem;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+        .prose h3 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+        .prose p {
+            margin-bottom: 1.25rem;
+        }
+        .prose ul, .prose ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+        .prose blockquote {
+            border-left: 4px solid #4A90E2;
+            padding-left: 1rem;
+            font-style: italic;
+            margin: 1.5rem 0;
+            color: #4a5568;
+        }
+        .prose pre {
+            background-color: #F5F7FA;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .prose code {
+            color: #4A90E2;
+            background-color: rgba(74, 144, 226, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+        .prose a {
+            color: #4A90E2;
+            text-decoration: none;
+            border-bottom: 1px dashed #4A90E2;
+            transition: all 0.3s ease;
+        }
+        .prose a:hover {
+            color: #2A3F54;
+            border-bottom: 1px solid #2A3F54;
+        }
+    </style>
+</head>
+<body class="min-h-full">
+    {% set active_page = 'notes' if post.is_note else 'home' %}
+    {% include 'components/nav.html' %}
+
+    <!-- 文章内容 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <article class="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden">
+                <!-- 文章头部 -->
+                <header class="p-8 border-b border-gray-100">
+                    <h1 class="text-2xl md:text-3xl font-medium text-primary mb-4">{{ post.title }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                        <div class="flex items-center">
+                            <img src="https://unpkg.com/lucide-static@latest/icons/calendar.svg" alt="Date" class="w-4 h-4 mr-1">
+                            <span>{{ post.created_at.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        {% if post.category %}
+                        <div class="flex items-center">
+                            <img src="https://unpkg.com/lucide-static@latest/icons/tag.svg" alt="Category" class="w-4 h-4 mr-1">
+                            <span>{{ post.category.name }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="flex items-center">
+                            <img src="https://unpkg.com/lucide-static@latest/icons/file-text.svg" alt="Type" class="w-4 h-4 mr-1">
+                            <span>{{ '笔记' if post.post_type == 'note' else '文章' }}</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <!-- 文章内容 -->
+                <div class="p-8">
+                    <div class="prose">
+                        {{ content|safe }}
+                    </div>
+                </div>
+            </article>
+
+            <!-- 返回按钮 -->
+            <div class="mt-8">
+                <a href="{{ url_for('notes') if post.post_type == 'note' else url_for('index') }}" class="flex items-center text-accent hover:text-primary transition-colors duration-300 group">
+                    <img src="https://unpkg.com/lucide-static@latest/icons/arrow-left.svg" alt="Back" class="w-4 h-4 mr-2">
+                    返回{{ '笔记列表' if post.post_type == 'note' else '首页' }}
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    {% include 'components/footer.html' %}
+
+    <script>
+        // 移动端菜单切换
+        document.querySelector('button').addEventListener('click', function() {
+            const mobileMenu = document.querySelector('.md\\:hidden:not(button)');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html> 

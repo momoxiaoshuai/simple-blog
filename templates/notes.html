@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记 | 个人博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        'primary': '#2A3F54',
+                        'accent': '#4A90E2',
+                        'light': '#F5F7FA',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #FCFCFC;
+            padding-bottom: 80px;
+        }
+
+        /* 链接悬停过渡 */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #4A90E2;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col overflow-x-hidden relative">
+    {% set active_page = 'notes' %}
+    {% include 'components/nav.html' %}
+
+    <!-- 页面内容 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <!-- 页面标题 -->
+            <header class="mb-8">
+                <h1 class="text-3xl font-light text-primary mb-2">我的笔记</h1>
+                <p class="text-gray-600">记录学习过程中的点滴思考</p>
+            </header>
+
+            <!-- 分类过滤器 -->
+            <div class="mb-8 overflow-x-auto">
+                <div class="inline-flex items-center space-x-2 pb-2">
+                    <a href="{{ url_for('notes') }}" class="px-4 py-2 rounded-md {% if not current_category %}bg-accent text-white{% else %}bg-light text-primary hover:bg-gray-200{% endif %} text-sm transition-colors duration-300">
+                        全部
+                    </a>
+                    
+                    {% for category in categories %}
+                        <a href="{{ url_for('notes', category=category.id) }}" 
+                           class="px-4 py-2 rounded-md {% if current_category == category.id %}bg-accent text-white{% else %}bg-light text-primary hover:bg-gray-200{% endif %} text-sm transition-colors duration-300">
+                            {{ category.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+                <div class="border-b border-gray-200 mt-2"></div>
+            </div>
+
+            <!-- 笔记列表 -->
+            {% if notes %}
+                <div class="grid md:grid-cols-2 gap-6">
+                    {% for note in notes %}
+                        <article class="card-hover group bg-white border border-gray-100 hover:border-accent rounded-lg overflow-hidden transition-all duration-300 flex flex-col h-full">
+                            <div class="p-6 flex-grow">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h2 class="text-xl text-primary group-hover:text-accent transition-colors duration-300">
+                                        <a href="{{ url_for('post', post_id=note.id) }}" class="hover:underline">{{ note.title }}</a>
+                                    </h2>
+                                    {% if note.category %}
+                                        <span class="bg-light text-primary text-xs px-3 py-1 rounded-full hover:bg-accent hover:text-white transition-all duration-300">{{ note.category.name }}</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-gray-600 text-sm mb-4">{{ note.content[:120] + '...' if note.content|length > 120 else note.content }}</p>
+                            </div>
+                            <div class="border-t border-gray-100 px-6 py-3 flex justify-between items-center bg-light bg-opacity-50">
+                                <span class="text-xs text-gray-500">{{ note.created_at.strftime('%Y-%m-%d') }}</span>
+                                <a href="{{ url_for('post', post_id=note.id) }}" class="text-accent text-sm flex items-center hover:underline group">
+                                    查看详情
+                                    <img src="https://unpkg.com/lucide-static@latest/icons/chevron-right.svg" alt="View" class="w-4 h-4 ml-1">
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-16 border border-dashed border-gray-300 rounded-md">
+                    <img src="https://unpkg.com/lucide-static@latest/icons/book.svg" alt="No notes" class="w-12 h-12 mx-auto mb-4 text-gray-400">
+                    <p class="text-gray-500 mb-2">暂无笔记</p>
+                    <p class="text-gray-400 text-sm">在这个分类下没有找到任何笔记</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- 装饰元素 -->
+    <div class="fixed -bottom-16 -right-16 w-64 h-64 bg-accent bg-opacity-5 rounded-full z-0 animate-pulse"></div>
+    <div class="fixed -top-16 -left-16 w-64 h-64 bg-primary bg-opacity-5 rounded-full z-0 animate-pulse" style="animation-duration: 3s"></div>
+
+    <!-- 页脚 -->
+    {% include 'components/footer.html' %}
+
+    <script>
+        // 移动端菜单切换
+        document.querySelector('button').addEventListener('click', function() {
+            const mobileMenu = document.querySelector('.md\\:hidden:not(button)');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html> 

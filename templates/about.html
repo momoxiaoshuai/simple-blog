@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 | 个人博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        'primary': '#2A3F54',
+                        'accent': '#4A90E2',
+                        'light': '#F5F7FA',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #FCFCFC;
+            padding-bottom: 80px;
+        }
+
+        /* 链接悬停过渡 */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #4A90E2;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col overflow-x-hidden relative">
+    {% set active_page = 'about' %}
+    {% include 'components/nav.html' %}
+
+    <!-- 页面内容 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-10 items-start">
+                <!-- 左侧个人信息卡 -->
+                <div class="w-full md:w-1/3 bg-white border border-gray-100 rounded-lg p-6 shadow-sm backdrop-blur-sm bg-opacity-80 sticky top-4 card-hover">
+                    <div class="text-center">
+                        {% if profile and profile.avatar %}
+                            <img src="{{ profile.avatar }}" alt="{{ profile.name }}" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-2 border-accent">
+                        {% else %}
+                            <div class="w-32 h-32 rounded-full mx-auto mb-4 bg-light flex items-center justify-center text-accent">
+                                <img src="https://unpkg.com/lucide-static@latest/icons/user.svg" alt="User" class="w-12 h-12">
+                            </div>
+                        {% endif %}
+                        <h2 class="text-xl font-medium text-primary mb-2">{{ profile.name if profile else '博主' }}</h2>
+                    </div>
+                    
+                    {% if profile and profile.skills %}
+                        <div class="mt-6">
+                            <h3 class="text-sm uppercase tracking-wide text-gray-500 mb-3 flex items-center">
+                                <img src="https://unpkg.com/lucide-static@latest/icons/code.svg" alt="Skills" class="w-4 h-4 mr-2">
+                                技能
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {% for skill in profile.skills.split(',') %}
+                                    <span class="bg-light text-primary text-xs px-3 py-1 rounded-full hover:bg-accent hover:text-white transition-all duration-300">{{ skill.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500 mb-3 flex items-center">
+                            <img src="https://unpkg.com/lucide-static@latest/icons/link.svg" alt="Links" class="w-4 h-4 mr-2">
+                            社交账号
+                        </h3>
+                        <div class="flex justify-center space-x-4">
+                            <a href="https://github.com/momoxiaoshuai" target="_blank" class="text-gray-400 hover:text-accent transition-colors duration-300">
+                                <img src="https://unpkg.com/lucide-static@latest/icons/github.svg" alt="GitHub" class="w-5 h-5">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧内容 -->
+                <div class="w-full md:w-2/3">
+                    <!-- 关于我内容 -->
+                    <section>
+                        <h1 class="text-2xl md:text-3xl font-light text-primary mb-6 flex items-center">
+                            <span class="border-b-2 border-accent pb-1">关于我</span>
+                            <div class="flex-grow border-b border-gray-200 ml-4"></div>
+                        </h1>
+                        
+                        {% if profile and profile.bio %}
+                            <div class="prose text-gray-700 leading-relaxed mb-10">
+                                {% for paragraph in profile.bio.split('\n') %}
+                                    {% if paragraph.strip() %}
+                                        <p class="mb-4">{{ paragraph }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="p-6 bg-light rounded-md text-center">
+                                <img src="https://unpkg.com/lucide-static@latest/icons/user.svg" alt="User" class="w-12 h-12 mx-auto mb-4 text-gray-400">
+                                <p class="text-gray-500">暂无个人简介</p>
+                            </div>
+                        {% endif %}
+                    </section>
+
+                    <!-- 装饰元素 -->
+                    <div class="mt-12 border-t border-dashed border-gray-200 pt-8 relative">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4">
+                            <img src="https://unpkg.com/lucide-static@latest/icons/sparkles.svg" alt="Sparkles" class="w-6 h-6 text-accent">
+                        </div>
+                    </div>
+
+                    <!-- 联系方式 -->
+                    <section class="mt-8">
+                        <h2 class="text-xl font-light text-primary mb-4 flex items-center">
+                            <span class="border-b-2 border-accent pb-1">联系我</span>
+                            <div class="flex-grow border-b border-gray-200 ml-4"></div>
+                        </h2>
+                        
+                        <div class="p-6 bg-white border border-gray-100 rounded-lg shadow-sm card-hover">
+                            <p class="text-gray-600 mb-6">如果您对我的工作感兴趣，或有任何问题，欢迎随时联系我。</p>
+                            
+                            <div class="flex flex-col space-y-4">
+                                <a href="dashuaibishiye@gmail.com" class="flex items-center text-accent hover:text-primary transition-colors duration-300 group">
+                                    <img src="https://unpkg.com/lucide-static@latest/icons/mail.svg" alt="Email" class="w-5 h-5 mr-3">
+                                    <span>dashuaibishiye@gmail.com</span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    {% include 'components/footer.html' %}
+
+    <script>
+        // 移动端菜单切换
+        document.querySelector('button').addEventListener('click', function() {
+            const mobileMenu = document.querySelector('.md\\:hidden:not(button)');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html> 
