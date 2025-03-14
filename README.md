@@ -25,7 +25,7 @@
 
 1. 克隆仓库：
 ```bash
-git clone [repository-url]
+git clone https://github.com/momoxiaoshuai/simple-blog.git
 cd blog
 ```
 
@@ -59,6 +59,7 @@ http://localhost:8081
 - 点击"写文章"创建新的博客文章
 - 支持 Markdown 格式编写文章内容
 - 文章自动按时间倒序排列
+- 笔记内容是我随机生成的,具体使用可以自行修改
 
 ## 注意事项
 
