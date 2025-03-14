@@ -2,6 +2,12 @@
 
 一个使用 Flask 构建的极简风格个人博客系统，采用简笔画风格的设计元素。
 ![image](https://github.com/user-attachments/assets/941a1e8d-f714-496e-bba6-06c87167504f)
+![image](https://github.com/user-attachments/assets/8637e9bb-1bc6-477c-a7e8-f21d4aa13113)
+![image](https://github.com/user-attachments/assets/6a3241e7-e00d-441b-8f4e-57a192d25bcd)
+![image](https://github.com/user-attachments/assets/2b1dcadd-e45f-4d56-9d08-a1671396f104)
+
+
+
 
 
 ## 特点
@@ -59,7 +65,7 @@ http://localhost:8081
 - 点击"写文章"创建新的博客文章
 - 支持 Markdown 格式编写文章内容
 - 文章自动按时间倒序排列
-- 笔记内容是我随机生成的,具体使用可以自行修改
+- 初始化数据都在init.py中,可根据需求自行修改
 
 ## 注意事项
 
