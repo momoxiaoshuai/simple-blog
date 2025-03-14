@@ -24,7 +24,7 @@ def init_sample_data():
         # 创建个人资料
         profile = Profile(
             name='默默',
-            avatar='../static/images/me.jpg',  # 使用在线头像生成服务
+            avatar='../static/images/head.jpg',  # 使用在线头像生成服务
             bio="""我是一名充满热情的全栈开发者，专注于Web应用和交互设计。
 
 过去5年，我致力于打造优秀的用户体验和高性能的后端系统。我相信技术应该为人所用，而不是让人感到困惑。
