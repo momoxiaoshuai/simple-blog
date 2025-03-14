@@ -1,6 +1,8 @@
 # 极简博客
 
 一个使用 Flask 构建的极简风格个人博客系统，采用简笔画风格的设计元素。
+![image](https://github.com/user-attachments/assets/941a1e8d-f714-496e-bba6-06c87167504f)
+
 
 ## 特点
 
@@ -48,7 +50,7 @@ python app.py
 
 2. 在浏览器中访问：
 ```
-http://localhost:5000
+http://localhost:8081
 ```
 
 ## 使用说明
